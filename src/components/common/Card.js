@@ -14,7 +14,8 @@ const styles = {
     borderWidth : 1,
     borderRadius : 10,
     margin : 5,
-    backgroundColor : '#ffffff'
+    backgroundColor : '#ffffff',
+    borderColor : '#CFCFCF'
   }
 }
 

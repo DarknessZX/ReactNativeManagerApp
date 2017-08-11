@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
-import { EMPLOYEE_UPDATE, EMPLOYEE_CREATE, EMPLOYEE_FETCH_SUCCESS } from './type';
+import { EMPLOYEE_UPDATE, EMPLOYEE_CREATE, EMPLOYEE_FETCH_SUCCESS, EMPLOYEE_SAVE_SUCCESS } from './type';
 
 export const employeeUpdate = ({ prop, value}) => {
   return {
@@ -30,7 +30,32 @@ export const employeeFetch = () => {
   return (dispatch) => {
     firebase.database().ref(`/users/${currentUser.uid}/employees`)
       .on('value', snapshot => {
-        dispatch({ type :EMPLOYEE_FETCH_SUCCESS, payload: snapshot.val() });
+        dispatch({ type : EMPLOYEE_FETCH_SUCCESS, payload: snapshot.val() });
+      })
+  }
+}
+
+export const employeeSave = ({ name, phone, shift, uid }) => {
+  const { currentUser } = firebase.auth();
+
+  return (dispatch) => {
+    firebase.database().ref(`/users/${currentUser.uid}/employees/${uid}`)
+      .set({ name, phone, shift})
+      .then(() => {
+        Actions.main({ type : 'reset' });
+        dispatch({ type : EMPLOYEE_SAVE_SUCCESS });
+      });
+  }
+}
+
+export const employeeDelete = ({ uid }) => {
+  const { currentUser } = firebase.auth();
+
+  return (dispatch) => {
+    firebase.database().ref(`/users/${currentUser.uid}/employees/${uid}`)
+      .remove()
+      .then(() => {
+        Actions.main({ type : 'reset' });
       })
   }
 }
